@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>StrangerLink</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -13,170 +13,233 @@
       --text:#ffffff;--sub:#8888aa;--border:rgba(255,255,255,0.07);
       --pill:#161624;
     }
-    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;overflow:hidden}
 
-    /* ── LAYOUT ── */
-    #app{height:100vh;display:flex;flex-direction:column}
+    html { height: 100%; }
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      /* NO overflow:hidden — causes black screen on mobile keyboard open */
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh; /* dynamic viewport height — accounts for mobile browser chrome */
+      min-height: -webkit-fill-available;
+    }
 
     /* ── NAV ── */
     .nav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;
-      border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;z-index:10}
-    .nav-logo{display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:700;color:var(--text);text-decoration:none}
+      border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0;z-index:10;
+      position:sticky;top:0}
+    .nav-logo{display:flex;align-items:center;gap:8px;font-size:1.05rem;font-weight:700;color:var(--text)}
     .nav-logo svg{color:#5b4fff}
     .nav-right{display:flex;align-items:center;gap:10px}
     .online-badge{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.06);
-      border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:5px 12px;font-size:0.78rem;color:var(--sub);font-weight:500}
+      border:1px solid rgba(255,255,255,0.1);border-radius:100px;padding:5px 12px;
+      font-size:0.78rem;color:var(--sub);font-weight:500}
     .green-dot{width:7px;height:7px;background:#4ade80;border-radius:50%;animation:blink 2s ease infinite}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
     .btn-signin{background:transparent;border:1px solid var(--border);color:var(--sub);
-      padding:6px 14px;border-radius:8px;font-size:0.8rem;cursor:pointer;font-family:inherit;font-weight:500;transition:all .2s}
+      padding:6px 14px;border-radius:8px;font-size:0.8rem;cursor:pointer;font-family:inherit;
+      font-weight:500;transition:all .2s}
     .btn-signin:hover{border-color:var(--accent);color:var(--text)}
 
     /* ── MODE TOGGLE ── */
-    .mode-wrap{display:flex;justify-content:center;padding:20px 0 0;flex-shrink:0}
+    .mode-wrap{display:flex;justify-content:center;padding:16px 0 0;flex-shrink:0}
     .mode-toggle{display:flex;background:var(--pill);border-radius:100px;padding:4px;gap:2px}
-    .mode-btn{display:flex;align-items:center;gap:7px;padding:11px 30px;border-radius:100px;
-      border:none;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:600;
+    .mode-btn{display:flex;align-items:center;gap:7px;padding:10px 26px;border-radius:100px;
+      border:none;cursor:pointer;font-family:inherit;font-size:0.88rem;font-weight:600;
       transition:all .2s;color:var(--sub);background:transparent}
     .mode-btn.active{background:var(--accent);color:#fff}
-    .mode-btn svg{width:16px;height:16px}
+    .mode-btn svg{width:15px;height:15px}
 
-    /* ── HOME / RANDOM ── */
-    #homeRandom{flex:1;display:flex;flex-direction:column;overflow:hidden}
-    #randomContent{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:20px;gap:28px}
-    .hero h1{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:800;letter-spacing:-0.5px;text-align:center;margin-bottom:10px}
-    .hero p{color:var(--sub);font-size:0.95rem;text-align:center;max-width:380px;line-height:1.5}
+    /* ── SCREENS ── */
+    #homeRandom{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+    #homeGroups{flex:1;display:none;overflow:hidden;min-height:0}
+    #homeGroups.show{display:flex}
+
+    /* ── RANDOM LANDING ── */
+    #randomContent{flex:1;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;padding:20px;gap:24px}
+    .hero h1{font-size:clamp(1.7rem,5vw,2.6rem);font-weight:800;letter-spacing:-0.5px;
+      text-align:center;margin-bottom:10px}
+    .hero p{color:var(--sub);font-size:0.92rem;text-align:center;max-width:340px;line-height:1.5}
     .hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-    .btn-primary{background:var(--accent);color:#fff;border:none;padding:14px 32px;
-      border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-    .btn-primary:hover{background:var(--accent-h);transform:translateY(-1px)}
+    .btn-primary{background:var(--accent);color:#fff;border:none;padding:13px 28px;
+      border-radius:10px;font-size:0.92rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+    .btn-primary:hover{background:var(--accent-h)}
     .btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border);
-      padding:14px 32px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
-    .btn-secondary:hover{background:#1e1e32;border-color:rgba(255,255,255,0.15)}
+      padding:13px 28px;border-radius:10px;font-size:0.92rem;font-weight:600;cursor:pointer;
+      font-family:inherit;transition:all .2s}
+    .btn-secondary:hover{background:#1e1e32}
 
-    /* ── CHAT VIEW (Random) ── */
-    #chatView{flex:1;display:none;flex-direction:column;overflow:hidden;margin:12px;
-      border:1px solid var(--border);border-radius:14px;background:var(--card)}
+    /* ── CHAT VIEW ── */
+    #chatView{
+      flex:1;display:none;flex-direction:column;
+      min-height:0; /* critical for flex children to scroll */
+      margin:10px;
+      border:1px solid var(--border);border-radius:14px;background:var(--card);
+      overflow:hidden;
+    }
     #chatView.show{display:flex}
+
     .chat-header{display:flex;align-items:center;justify-content:space-between;
-      padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0}
-    .chat-status-txt{font-size:0.88rem;color:var(--sub);font-weight:500}
+      padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;
+      background:var(--card)}
+    .chat-status-txt{font-size:0.82rem;color:var(--sub);font-weight:500;
+      flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:8px}
     .chat-status-txt.connected{color:#4ade80}
-    .chat-header-btns{display:flex;gap:8px}
-    .btn-next{display:flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--border);
-      color:var(--text);padding:7px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
-      cursor:pointer;font-family:inherit;transition:all .2s}
-    .btn-next:hover{border-color:rgba(255,255,255,0.2)}
-    .btn-stop{display:flex;align-items:center;gap:6px;background:rgba(239,68,68,0.15);border:none;
-      color:var(--red);padding:7px 16px;border-radius:8px;font-size:0.82rem;font-weight:600;
-      cursor:pointer;font-family:inherit;transition:opacity .2s}
-    .btn-stop:hover{opacity:0.8}
-    .btn-next svg,.btn-stop svg{width:14px;height:14px}
-    .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;min-height:0}
+    .chat-header-btns{display:flex;gap:6px;flex-shrink:0}
+
+    .btn-next{display:flex;align-items:center;gap:5px;background:var(--card2);
+      border:1px solid var(--border);color:var(--text);padding:7px 13px;border-radius:8px;
+      font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap}
+    .btn-stop{display:flex;align-items:center;gap:5px;background:rgba(239,68,68,0.15);
+      border:none;color:var(--red);padding:7px 13px;border-radius:8px;font-size:0.78rem;
+      font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .btn-next svg,.btn-stop svg{width:13px;height:13px;flex-shrink:0}
+
+    .messages{
+      flex:1;
+      overflow-y:auto;
+      -webkit-overflow-scrolling:touch; /* smooth scroll on iOS */
+      padding:14px;
+      display:flex;flex-direction:column;gap:8px;
+      min-height:0;
+    }
     .messages::-webkit-scrollbar{width:3px}
     .messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
-    .mwrap{display:flex;flex-direction:column;animation:min .2s ease}
-    @keyframes min{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .mwrap.me{align-items:flex-end}.mwrap.stranger{align-items:flex-start}.mwrap.sys{align-items:center}
-    .mbubble{max-width:70%;padding:9px 13px;border-radius:14px;font-size:0.88rem;line-height:1.5;word-break:break-word}
-    .mwrap.me .mbubble{background:var(--accent);color:#fff;border-radius:14px 14px 3px 14px}
-    .mwrap.stranger .mbubble{background:var(--card2);border-radius:14px 14px 14px 3px}
-    .mwrap.sys .mbubble{background:none;color:var(--sub);font-size:0.75rem;padding:2px 0}
-    .mlabel{font-size:0.68rem;color:var(--sub);margin-top:3px;padding:0 2px}
-    .chat-input-row{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);flex-shrink:0}
-    .msg-input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;
-      padding:10px 14px;color:var(--text);font-family:inherit;font-size:0.88rem;outline:none;
-      resize:none;min-height:42px;max-height:100px;transition:border-color .2s;line-height:1.4}
+
+    .mwrap{display:flex;flex-direction:column;animation:msgIn .2s ease}
+    @keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+    .mwrap.me{align-items:flex-end}
+    .mwrap.stranger{align-items:flex-start}
+    .mwrap.sys{align-items:center}
+    .mbubble{max-width:72%;padding:8px 12px;border-radius:13px;font-size:0.86rem;
+      line-height:1.5;word-break:break-word}
+    .mwrap.me .mbubble{background:var(--accent);color:#fff;border-radius:13px 13px 3px 13px}
+    .mwrap.stranger .mbubble{background:var(--card2);border-radius:13px 13px 13px 3px}
+    .mwrap.sys .mbubble{background:none;color:var(--sub);font-size:0.74rem;padding:2px 0}
+    .mlabel{font-size:0.66rem;color:var(--sub);margin-top:3px;padding:0 2px}
+
+    /* INPUT ROW — key fix: flex-shrink:0 and no overflow hidden on parent */
+    .chat-input-row{
+      display:flex;gap:8px;padding:10px 10px;
+      border-top:1px solid var(--border);
+      flex-shrink:0;
+      background:var(--card);
+      align-items:flex-end;
+    }
+    .msg-input{
+      flex:1;
+      background:var(--card2);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:10px 13px;
+      color:var(--text);
+      font-family:inherit;
+      font-size:16px; /* 16px prevents iOS auto-zoom on focus */
+      outline:none;
+      resize:none;
+      min-height:42px;
+      max-height:90px;
+      transition:border-color .2s;
+      line-height:1.4;
+      -webkit-appearance:none;
+    }
     .msg-input:focus{border-color:var(--accent)}
     .msg-input::placeholder{color:var(--sub)}
-    .btn-send{background:var(--accent);border:none;border-radius:10px;width:42px;height:42px;
-      cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s}
+    .btn-send{
+      background:var(--accent);border:none;border-radius:10px;
+      width:42px;height:42px;min-width:42px;
+      cursor:pointer;display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;transition:background .2s;
+    }
     .btn-send:hover{background:var(--accent-h)}
     .btn-send svg{width:16px;height:16px;fill:#fff}
 
-    /* ── GROUPS VIEW ── */
-    #homeGroups{flex:1;display:none;overflow:hidden}
-    #homeGroups.show{display:flex}
-    .groups-layout{display:flex;flex:1;height:100%;overflow:hidden}
-
-    /* sidebar */
-    .rooms-sidebar{width:240px;flex-shrink:0;border-right:1px solid var(--border);
-      overflow-y:auto;background:var(--bg2)}
+    /* ── GROUPS ── */
+    .groups-layout{display:flex;flex:1;height:100%;overflow:hidden;min-height:0}
+    .rooms-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);
+      overflow-y:auto;background:var(--bg2);-webkit-overflow-scrolling:touch}
     .rooms-sidebar::-webkit-scrollbar{width:3px}
-    .rooms-sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06)}
-    .sidebar-head{padding:14px 16px;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;gap:8px;font-weight:700;font-size:0.88rem;color:var(--text)}
-    .sidebar-head svg{color:var(--accent);width:16px;height:16px}
-    .room-item{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
+    .sidebar-head{padding:12px 14px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:8px;font-weight:700;font-size:0.84rem;color:var(--text);
+      position:sticky;top:0;background:var(--bg2);z-index:1}
+    .sidebar-head svg{color:var(--accent);width:15px;height:15px}
+    .room-item{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;
       border-bottom:1px solid var(--border);transition:background .15s}
     .room-item:hover,.room-item.active{background:rgba(91,79,255,0.1)}
     .room-item.active{border-left:2px solid var(--accent)}
-    .room-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
-      justify-content:center;font-size:1.1rem;flex-shrink:0;background:var(--card2)}
-    .room-info .room-name{font-size:0.88rem;font-weight:600;color:var(--text)}
-    .room-info .room-count{font-size:0.72rem;color:var(--sub);margin-top:2px;display:flex;align-items:center;gap:4px}
-    .room-info .room-count svg{width:11px;height:11px}
+    .room-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;
+      justify-content:center;font-size:1rem;flex-shrink:0;background:var(--card2)}
+    .room-info .room-name{font-size:0.84rem;font-weight:600;color:var(--text)}
+    .room-info .room-count{font-size:0.7rem;color:var(--sub);margin-top:2px;
+      display:flex;align-items:center;gap:3px}
+    .room-info .room-count svg{width:10px;height:10px}
 
-    /* group main panel */
-    .group-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .group-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
     .group-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;
-      justify-content:center;gap:12px;color:var(--sub)}
-    .group-placeholder svg{width:48px;height:48px;opacity:0.2}
-    .group-placeholder p{font-size:0.88rem}
-    .group-chat{flex:1;display:none;flex-direction:column;overflow:hidden}
-    .group-chat.show{display:flex}
-    .group-chat-header{padding:12px 16px;border-bottom:1px solid var(--border);
-      display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-    .group-chat-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:0.95rem}
-    .group-chat-title span{font-size:1rem}
-    .group-member-count{font-size:0.75rem;color:var(--sub);margin-top:2px}
-    .btn-leave{background:rgba(239,68,68,0.12);border:none;color:var(--red);
-      padding:6px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:inherit}
-    .btn-leave:hover{opacity:0.8}
+      justify-content:center;gap:12px;color:var(--sub);padding:20px;text-align:center}
+    .group-placeholder svg{width:44px;height:44px;opacity:0.18}
+    .group-placeholder p{font-size:0.85rem}
 
-    /* ── NAME ENTRY ── */
-    .name-entry{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-      gap:20px;padding:20px}
-    .name-entry-box{background:var(--card);border:1px solid var(--border);border-radius:16px;
-      padding:32px 28px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:16px}
-    .name-entry-box h3{font-size:1rem;font-weight:700}
-    .name-entry-box p{font-size:0.82rem;color:var(--sub)}
+    .name-entry{flex:1;display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:16px;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .name-entry-box{background:var(--card);border:1px solid var(--border);border-radius:14px;
+      padding:28px 22px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px}
+    .name-entry-box h3{font-size:0.98rem;font-weight:700}
+    .name-entry-box p{font-size:0.8rem;color:var(--sub)}
     .name-input{background:var(--card2);border:1px solid var(--border);border-radius:10px;
-      padding:11px 14px;color:var(--text);font-family:inherit;font-size:0.9rem;outline:none;
-      transition:border-color .2s;width:100%}
+      padding:10px 13px;color:var(--text);font-family:inherit;font-size:16px;outline:none;
+      transition:border-color .2s;width:100%;-webkit-appearance:none}
     .name-input:focus{border-color:var(--accent)}
     .name-input::placeholder{color:var(--sub)}
     .btn-join-room{background:var(--accent);color:#fff;border:none;padding:11px;border-radius:10px;
       font-size:0.9rem;font-weight:600;cursor:pointer;font-family:inherit;width:100%;transition:background .2s}
     .btn-join-room:hover{background:var(--accent-h)}
 
+    .group-chat{flex:1;display:none;flex-direction:column;overflow:hidden;min-height:0}
+    .group-chat.show{display:flex}
+    .group-chat-header{padding:11px 14px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .group-chat-title{display:flex;align-items:center;gap:7px;font-weight:700;font-size:0.92rem}
+    .group-member-count{font-size:0.72rem;color:var(--sub);margin-top:2px}
+    .btn-leave{background:rgba(239,68,68,0.12);border:none;color:var(--red);
+      padding:6px 12px;border-radius:8px;font-size:0.76rem;font-weight:600;cursor:pointer;font-family:inherit}
+
     /* ── TOAST ── */
     .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);
-      background:var(--card2);border:1px solid var(--border);padding:9px 18px;border-radius:100px;
-      font-size:0.8rem;color:var(--sub);opacity:0;pointer-events:none;transition:all .3s;z-index:999;white-space:nowrap}
+      background:var(--card2);border:1px solid var(--border);padding:8px 16px;
+      border-radius:100px;font-size:0.78rem;color:var(--sub);opacity:0;pointer-events:none;
+      transition:all .3s;z-index:9999;white-space:nowrap}
     .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-    /* ── NOTIFICATION ── */
-    .notif{position:fixed;bottom:24px;right:20px;background:var(--card);border:1px solid var(--border);
-      border-radius:12px;padding:14px 18px;max-width:260px;opacity:0;transform:translateY(16px);
-      pointer-events:none;transition:all .3s;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+    .notif{position:fixed;bottom:20px;right:16px;background:var(--card);
+      border:1px solid var(--border);border-radius:12px;padding:13px 16px;max-width:240px;
+      opacity:0;transform:translateY(14px);pointer-events:none;transition:all .3s;
+      z-index:9999;box-shadow:0 8px 28px rgba(0,0,0,0.4)}
     .notif.show{opacity:1;transform:translateY(0)}
-    .notif-title{font-size:0.85rem;font-weight:700;margin-bottom:4px}
-    .notif-body{font-size:0.78rem;color:var(--sub)}
+    .notif-title{font-size:0.82rem;font-weight:700;margin-bottom:3px}
+    .notif-body{font-size:0.76rem;color:var(--sub)}
 
     /* ── MOBILE ── */
     @media(max-width:600px){
-      .mode-btn{padding:10px 18px;font-size:0.82rem}
-      .rooms-sidebar{width:180px}
-      .btn-next,.btn-stop{padding:7px 10px;font-size:0.75rem}
-      .name-entry-box{padding:24px 18px}
-      #chatView{margin:8px}
+      .mode-btn{padding:9px 16px;font-size:0.82rem}
+      .rooms-sidebar{width:160px}
+      .btn-next,.btn-stop{padding:7px 10px;font-size:0.74rem}
+      #chatView{margin:6px}
+      .chat-header{padding:9px 10px}
+      .name-entry-box{padding:22px 16px}
     }
-    @media(max-width:420px){
-      .rooms-sidebar{width:140px}
-      .room-item{padding:10px 10px}
-      .room-icon{width:32px;height:32px;font-size:0.9rem}
+    @media(max-width:380px){
+      .rooms-sidebar{width:130px}
+      .room-item{padding:9px 8px;gap:7px}
+      .room-icon{width:28px;height:28px;font-size:0.85rem}
+      .room-info .room-name{font-size:0.78rem}
     }
   </style>
 </head>
@@ -186,7 +249,7 @@
   <!-- NAV -->
   <div class="nav">
     <div class="nav-logo">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
       </svg>
       StrangerLink
@@ -205,7 +268,8 @@
     <div class="mode-toggle">
       <button class="mode-btn active" id="btnRandom" onclick="setMode('random')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
         </svg>
         Random
       </button>
@@ -222,8 +286,6 @@
 
   <!-- ══ RANDOM MODE ══ -->
   <div id="homeRandom">
-
-    <!-- Landing -->
     <div id="randomContent">
       <div class="hero">
         <h1>Meet someone new</h1>
@@ -235,20 +297,21 @@
       </div>
     </div>
 
-    <!-- Chat View -->
     <div id="chatView">
       <div class="chat-header">
         <span class="chat-status-txt" id="chatStatusTxt">Looking for a stranger...</span>
         <div class="chat-header-btns">
           <button class="btn-next" onclick="nextStranger()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.32"/>
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 .49-3.32"/>
             </svg>
             Next
           </button>
           <button class="btn-stop" onclick="stopChat()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6"/>
+              <circle cx="12" cy="12" r="10"/>
+              <rect x="9" y="9" width="6" height="6"/>
             </svg>
             Stop
           </button>
@@ -263,14 +326,11 @@
         </button>
       </div>
     </div>
-
-  </div><!-- end homeRandom -->
+  </div>
 
   <!-- ══ GROUPS MODE ══ -->
   <div id="homeGroups">
     <div class="groups-layout">
-
-      <!-- Sidebar -->
       <div class="rooms-sidebar">
         <div class="sidebar-head">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -280,30 +340,22 @@
         </div>
         <div id="roomsList"></div>
       </div>
-
-      <!-- Main panel -->
       <div class="group-main">
-
-        <!-- placeholder -->
         <div class="group-placeholder" id="groupPlaceholder">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
           </svg>
           <p>Select a room from the sidebar to join the conversation.</p>
         </div>
-
-        <!-- name entry -->
         <div class="name-entry" id="nameEntry" style="display:none">
           <div class="name-entry-box">
             <h3 id="nameEntryTitle">Join Room</h3>
             <p>Enter a display name to use in this room</p>
-            <input class="name-input" id="nameInput" type="text" placeholder="Your display name..." maxlength="20"
-              onkeydown="if(event.key==='Enter') confirmJoinRoom()"/>
+            <input class="name-input" id="nameInput" type="text" placeholder="Your display name..."
+              maxlength="20" onkeydown="if(event.key==='Enter') confirmJoinRoom()"/>
             <button class="btn-join-room" onclick="confirmJoinRoom()">Join Room</button>
           </div>
         </div>
-
-        <!-- group chat -->
         <div class="group-chat" id="groupChat">
           <div class="group-chat-header">
             <div>
@@ -324,299 +376,280 @@
             </button>
           </div>
         </div>
-
       </div>
     </div>
-  </div><!-- end homeGroups -->
+  </div>
 
-</div><!-- end app -->
+</div>
 
 <div class="toast" id="toast"></div>
-<div class="notif" id="notif"><div class="notif-title" id="notifTitle"></div><div class="notif-body" id="notifBody"></div></div>
+<div class="notif" id="notif">
+  <div class="notif-title" id="notifTitle"></div>
+  <div class="notif-body" id="notifBody"></div>
+</div>
 
 <script>
-// ── WebSocket ──
-const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-const ws = new WebSocket(`${proto}//${location.host}`);
-let inChat = false;
-let currentMode = 'random';
-let pendingRoom = null;
-let currentGroupRoom = null;
+  // ── WebSocket ──
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const ws = new WebSocket(`${proto}//${location.host}`);
+  let inChat = false;
+  let currentMode = 'random';
+  let pendingRoom = null;
+  let currentGroupRoom = null;
 
-const ROOMS = [
-  { name:'General',    emoji:'🌍' },
-  { name:'Gaming',     emoji:'🎮' },
-  { name:'Music',      emoji:'🎵' },
-  { name:'Tech',       emoji:'💻' },
-  { name:'Movies & TV',emoji:'🎬' },
-  { name:'Sports',     emoji:'⚽' },
-  { name:'Travel',     emoji:'✈️'  },
-];
+  const ROOMS = [
+    {name:'General',    emoji:'🌍'},
+    {name:'Gaming',     emoji:'🎮'},
+    {name:'Music',      emoji:'🎵'},
+    {name:'Tech',       emoji:'💻'},
+    {name:'Movies & TV',emoji:'🎬'},
+    {name:'Sports',     emoji:'⚽'},
+    {name:'Travel',     emoji:'✈️'},
+  ];
 
-const groupCounts = {};
-
-// Build sidebar
-function buildSidebar() {
-  const list = document.getElementById('roomsList');
-  list.innerHTML = '';
-  ROOMS.forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'room-item';
-    div.id = `room-item-${r.name.replace(/\s/g,'_')}`;
-    div.onclick = () => clickRoom(r.name);
-    div.innerHTML = `
-      <div class="room-icon">${r.emoji}</div>
-      <div class="room-info">
-        <div class="room-name">${r.name}</div>
-        <div class="room-count">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span id="count-${r.name.replace(/\s/g,'_')}">0</span> online
-        </div>
-      </div>`;
-    list.appendChild(div);
-  });
-}
-buildSidebar();
-
-function updateRoomCount(name, count) {
-  const el = document.getElementById(`count-${name.replace(/\s/g,'_')}`);
-  if (el) el.textContent = count;
-}
-
-// ── WS events ──
-ws.onopen = () => {};
-
-ws.onmessage = (e) => {
-  const d = JSON.parse(e.data);
-  switch(d.type) {
-    case 'online_count':
-      document.getElementById('onlineCount').textContent = d.count;
-      break;
-    case 'group_counts':
-      Object.entries(d.counts).forEach(([name,c]) => updateRoomCount(name, c));
-      break;
-    case 'waiting':
-      setRandomStatus('waiting');
-      break;
-    case 'matched':
-      inChat = true;
-      setRandomStatus('connected');
-      addSysMsg('messages','🔗 You are now connected to a stranger! Say hi 👋');
-      showNotif('Connected','You\'re now chatting with a stranger.');
-      break;
-    case 'message':
-      addMsg('messages','stranger', d.text);
-      break;
-    case 'stranger_left':
-      inChat = false;
-      setRandomStatus('left');
-      addSysMsg('messages','👋 Stranger has disconnected. Click Next to find someone new.');
-      break;
-    case 'stopped':
-      showRandomLanding();
-      break;
-    case 'group_joined':
-      currentGroupRoom = d.room;
-      showGroupChat(d.room, d.count);
-      addSysMsg('groupMessages',`✅ You joined ${d.room} as ${d.username}`);
-      break;
-    case 'group_user_joined':
-      document.getElementById('groupMemberCount').textContent = `${d.count} online`;
-      updateRoomCount(d.room, d.count);
-      addSysMsg('groupMessages',`👋 ${d.username} joined the room`);
-      break;
-    case 'group_message':
-      addGroupMsg(d.username, d.text);
-      break;
-    case 'group_user_left':
-      document.getElementById('groupMemberCount').textContent = `${d.count} online`;
-      updateRoomCount(d.room, d.count);
-      addSysMsg('groupMessages',`${d.username} left the room`);
-      break;
-    case 'group_left':
-      currentGroupRoom = null;
-      showGroupPlaceholder();
-      break;
+  // Build sidebar
+  function buildSidebar() {
+    const list = document.getElementById('roomsList');
+    list.innerHTML = '';
+    ROOMS.forEach(r => {
+      const div = document.createElement('div');
+      div.className = 'room-item';
+      div.id = `ri-${r.name.replace(/\s/g,'_')}`;
+      div.onclick = () => clickRoom(r.name);
+      div.innerHTML = `
+        <div class="room-icon">${r.emoji}</div>
+        <div class="room-info">
+          <div class="room-name">${r.name}</div>
+          <div class="room-count">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span id="cnt-${r.name.replace(/\s/g,'_')}">0</span> online
+          </div>
+        </div>`;
+      list.appendChild(div);
+    });
   }
-};
+  buildSidebar();
 
-ws.onclose = () => { showToast('Connection lost. Please refresh the page.'); };
+  function updateRoomCount(name, count) {
+    const el = document.getElementById(`cnt-${name.replace(/\s/g,'_')}`);
+    if (el) el.textContent = count;
+  }
 
-// ── Mode switch ──
-function setMode(mode) {
-  currentMode = mode;
-  document.getElementById('btnRandom').classList.toggle('active', mode==='random');
-  document.getElementById('btnGroups').classList.toggle('active', mode==='groups');
-  document.getElementById('homeRandom').style.display = mode==='random' ? 'flex' : 'none';
-  document.getElementById('homeGroups').style.display = mode==='groups' ? 'flex' : 'none';
-  document.getElementById('homeGroups').classList.toggle('show', mode==='groups');
-}
-// init
-document.getElementById('homeGroups').style.display = 'none';
+  // ── WS events ──
+  ws.onmessage = (e) => {
+    const d = JSON.parse(e.data);
+    switch(d.type) {
+      case 'online_count':
+        document.getElementById('onlineCount').textContent = d.count; break;
+      case 'group_counts':
+        Object.entries(d.counts).forEach(([n,c]) => updateRoomCount(n, c)); break;
+      case 'waiting':
+        setRandomStatus('waiting'); break;
+      case 'matched':
+        inChat = true;
+        setRandomStatus('connected');
+        addSysMsg('messages','🔗 You are now connected to a stranger! Say hi 👋');
+        showNotif('Connected', "You're now chatting with a stranger.");
+        break;
+      case 'message':
+        addMsg('messages','stranger', d.text); break;
+      case 'stranger_left':
+        inChat = false;
+        setRandomStatus('left');
+        addSysMsg('messages','👋 Stranger disconnected. Click Next to find someone new.'); break;
+      case 'stopped':
+        showRandomLanding(); break;
+      case 'group_joined':
+        currentGroupRoom = d.room;
+        showGroupChat(d.room, d.count);
+        addSysMsg('groupMessages',`✅ You joined ${d.room} as ${d.username}`); break;
+      case 'group_user_joined':
+        document.getElementById('groupMemberCount').textContent = `${d.count} online`;
+        updateRoomCount(d.room, d.count);
+        addSysMsg('groupMessages',`👋 ${d.username} joined the room`); break;
+      case 'group_message':
+        addGroupMsg(d.username, d.text); break;
+      case 'group_user_left':
+        document.getElementById('groupMemberCount').textContent = `${d.count} online`;
+        updateRoomCount(d.room, d.count);
+        addSysMsg('groupMessages',`${d.username} left the room`); break;
+      case 'group_left':
+        currentGroupRoom = null;
+        showGroupPlaceholder(); break;
+    }
+  };
 
-// ── Random Chat ──
-function startRandomChat() {
-  document.getElementById('randomContent').style.display = 'none';
-  document.getElementById('chatView').classList.add('show');
-  document.getElementById('messages').innerHTML = '';
-  setRandomStatus('waiting');
-  addSysMsg('messages','⏳ Looking for a stranger...');
-  ws.send(JSON.stringify({ type:'join_random' }));
-  document.getElementById('msgInput').focus();
-}
+  ws.onclose = () => showToast('Connection lost. Please refresh.');
 
-function nextStranger() {
-  inChat = false;
-  document.getElementById('messages').innerHTML = '';
-  setRandomStatus('waiting');
-  addSysMsg('messages','⏳ Looking for a new stranger...');
-  ws.send(JSON.stringify({ type:'skip' }));
-}
+  // ── Mode ──
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('btnRandom').classList.toggle('active', mode==='random');
+    document.getElementById('btnGroups').classList.toggle('active', mode==='groups');
+    document.getElementById('homeRandom').style.display = mode==='random' ? 'flex' : 'none';
+    document.getElementById('homeGroups').style.display = mode==='groups' ? 'flex' : 'none';
+    document.getElementById('homeGroups').classList.toggle('show', mode==='groups');
+  }
+  document.getElementById('homeGroups').style.display = 'none';
 
-function stopChat() {
-  inChat = false;
-  ws.send(JSON.stringify({ type:'stop' }));
-}
+  // ── Random ──
+  function startRandomChat() {
+    document.getElementById('randomContent').style.display = 'none';
+    document.getElementById('chatView').classList.add('show');
+    document.getElementById('messages').innerHTML = '';
+    setRandomStatus('waiting');
+    addSysMsg('messages','⏳ Looking for a stranger...');
+    ws.send(JSON.stringify({type:'join_random'}));
+    setTimeout(() => document.getElementById('msgInput').focus(), 300);
+  }
 
-function showRandomLanding() {
-  document.getElementById('chatView').classList.remove('show');
-  document.getElementById('randomContent').style.display = 'flex';
-}
+  function nextStranger() {
+    inChat = false;
+    document.getElementById('messages').innerHTML = '';
+    setRandomStatus('waiting');
+    addSysMsg('messages','⏳ Looking for a new stranger...');
+    ws.send(JSON.stringify({type:'skip'}));
+  }
 
-function setRandomStatus(state) {
-  const el = document.getElementById('chatStatusTxt');
-  if (state==='waiting') { el.textContent='Looking for a stranger...'; el.className='chat-status-txt'; }
-  else if (state==='connected') { el.textContent='You are now connected to a stranger! Say hi 👋'; el.className='chat-status-txt connected'; }
-  else if (state==='left') { el.textContent='Stranger disconnected. Click Next for a new one.'; el.className='chat-status-txt'; }
-}
+  function stopChat() {
+    inChat = false;
+    ws.send(JSON.stringify({type:'stop'}));
+  }
 
-function sendMsg() {
-  const inp = document.getElementById('msgInput');
-  const txt = inp.value.trim();
-  if (!txt) return;
-  if (!inChat) { showToast('Wait for a stranger to connect first!'); return; }
-  ws.send(JSON.stringify({ type:'message', text:txt }));
-  addMsg('messages','me', txt);
-  inp.value = ''; inp.style.height = 'auto';
-}
+  function showRandomLanding() {
+    document.getElementById('chatView').classList.remove('show');
+    document.getElementById('randomContent').style.display = 'flex';
+  }
 
-function handleKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+  function setRandomStatus(state) {
+    const el = document.getElementById('chatStatusTxt');
+    if (state==='waiting')    { el.textContent='Looking for a stranger...'; el.className='chat-status-txt'; }
+    else if (state==='connected') { el.textContent='You are now connected to a stranger! Say hi 👋'; el.className='chat-status-txt connected'; }
+    else if (state==='left')  { el.textContent='Stranger disconnected. Click Next for a new one.'; el.className='chat-status-txt'; }
+  }
 
-// ── Group Rooms ──
-function clickRoom(name) {
-  // highlight sidebar
-  document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
-  const item = document.getElementById(`room-item-${name.replace(/\s/g,'_')}`);
-  if (item) item.classList.add('active');
+  function sendMsg() {
+    const inp = document.getElementById('msgInput');
+    const txt = inp.value.trim();
+    if (!txt) return;
+    if (!inChat) { showToast('Wait for a stranger to connect first!'); return; }
+    ws.send(JSON.stringify({type:'message', text:txt}));
+    addMsg('messages','me', txt);
+    inp.value = ''; inp.style.height = 'auto';
+  }
 
-  pendingRoom = name;
-  const r = ROOMS.find(x => x.name===name);
+  function handleKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
 
-  // show name entry
-  document.getElementById('groupPlaceholder').style.display = 'none';
-  document.getElementById('nameEntry').style.display = 'flex';
-  document.getElementById('groupChat').classList.remove('show');
-  document.getElementById('nameEntryTitle').textContent = `Join ${r ? r.emoji+' ' : ''}${name}`;
-  document.getElementById('nameInput').value = '';
-  setTimeout(() => document.getElementById('nameInput').focus(), 100);
-}
+  // ── Groups ──
+  function clickRoom(name) {
+    document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
+    const item = document.getElementById(`ri-${name.replace(/\s/g,'_')}`);
+    if (item) item.classList.add('active');
+    pendingRoom = name;
+    const r = ROOMS.find(x => x.name===name);
+    document.getElementById('groupPlaceholder').style.display = 'none';
+    document.getElementById('nameEntry').style.display = 'flex';
+    document.getElementById('groupChat').classList.remove('show');
+    document.getElementById('nameEntryTitle').textContent = `Join ${r ? r.emoji+' ' : ''}${name}`;
+    document.getElementById('nameInput').value = '';
+    setTimeout(() => document.getElementById('nameInput').focus(), 150);
+  }
 
-function confirmJoinRoom() {
-  const username = document.getElementById('nameInput').value.trim() || 'Anonymous';
-  if (!pendingRoom) return;
-  ws.send(JSON.stringify({ type:'join_group', room:pendingRoom, username }));
-  document.getElementById('nameEntry').style.display = 'none';
-}
+  function confirmJoinRoom() {
+    const username = document.getElementById('nameInput').value.trim() || 'Anonymous';
+    if (!pendingRoom) return;
+    ws.send(JSON.stringify({type:'join_group', room:pendingRoom, username}));
+    document.getElementById('nameEntry').style.display = 'none';
+  }
 
-function showGroupChat(roomName, count) {
-  const r = ROOMS.find(x => x.name===roomName);
-  document.getElementById('groupChatEmoji').textContent = r ? r.emoji : '#';
-  document.getElementById('groupChatName').textContent = roomName;
-  document.getElementById('groupMemberCount').textContent = `${count} online`;
-  document.getElementById('groupChat').classList.add('show');
-  document.getElementById('groupMessages').innerHTML = '';
-  document.getElementById('groupMsgInput').focus();
-}
+  function showGroupChat(roomName, count) {
+    const r = ROOMS.find(x => x.name===roomName);
+    document.getElementById('groupChatEmoji').textContent = r ? r.emoji : '#';
+    document.getElementById('groupChatName').textContent = roomName;
+    document.getElementById('groupMemberCount').textContent = `${count} online`;
+    document.getElementById('groupMessages').innerHTML = '';
+    document.getElementById('groupChat').classList.add('show');
+    setTimeout(() => document.getElementById('groupMsgInput').focus(), 150);
+  }
 
-function showGroupPlaceholder() {
-  document.getElementById('groupChat').classList.remove('show');
-  document.getElementById('nameEntry').style.display = 'none';
-  document.getElementById('groupPlaceholder').style.display = 'flex';
-  document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
-}
+  function showGroupPlaceholder() {
+    document.getElementById('groupChat').classList.remove('show');
+    document.getElementById('nameEntry').style.display = 'none';
+    document.getElementById('groupPlaceholder').style.display = 'flex';
+    document.querySelectorAll('.room-item').forEach(el => el.classList.remove('active'));
+  }
 
-function leaveGroupRoom() {
-  ws.send(JSON.stringify({ type:'leave_group' }));
-}
+  function leaveGroupRoom() {
+    ws.send(JSON.stringify({type:'leave_group'}));
+  }
 
-function sendGroupMsg() {
-  const inp = document.getElementById('groupMsgInput');
-  const txt = inp.value.trim();
-  if (!txt || !currentGroupRoom) return;
-  ws.send(JSON.stringify({ type:'message', text:txt }));
-  addGroupMsg('You', txt, true);
-  inp.value = ''; inp.style.height = 'auto';
-}
+  function sendGroupMsg() {
+    const inp = document.getElementById('groupMsgInput');
+    const txt = inp.value.trim();
+    if (!txt || !currentGroupRoom) return;
+    ws.send(JSON.stringify({type:'message', text:txt}));
+    addGroupMsg('You', txt, true);
+    inp.value = ''; inp.style.height = 'auto';
+  }
 
-function handleGroupKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendGroupMsg(); } }
+  function handleGroupKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendGroupMsg(); } }
 
-function addGroupMsg(username, text, isMe=false) {
-  const msgs = document.getElementById('groupMessages');
-  const wrap = document.createElement('div');
-  wrap.className = `mwrap ${isMe ? 'me' : 'stranger'}`;
-  wrap.innerHTML = `<div class="mbubble">${escHtml(text)}</div><div class="mlabel">${escHtml(username)}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+  function addGroupMsg(username, text, isMe=false) {
+    const msgs = document.getElementById('groupMessages');
+    const wrap = document.createElement('div');
+    wrap.className = `mwrap ${isMe ? 'me' : 'stranger'}`;
+    wrap.innerHTML = `<div class="mbubble">${escHtml(text)}</div><div class="mlabel">${escHtml(username)}</div>`;
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 
-// ── Shared helpers ──
-function addMsg(containerId, from, text) {
-  const msgs = document.getElementById(containerId);
-  const wrap = document.createElement('div');
-  wrap.className = `mwrap ${from}`;
-  wrap.innerHTML = `<div class="mbubble">${escHtml(text)}</div><div class="mlabel">${from==='me'?'You':'Stranger'}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+  function addMsg(containerId, from, text) {
+    const msgs = document.getElementById(containerId);
+    const wrap = document.createElement('div');
+    wrap.className = `mwrap ${from}`;
+    wrap.innerHTML = `<div class="mbubble">${escHtml(text)}</div><div class="mlabel">${from==='me'?'You':'Stranger'}</div>`;
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 
-function addSysMsg(containerId, text) {
-  const msgs = document.getElementById(containerId);
-  const wrap = document.createElement('div');
-  wrap.className = 'mwrap sys';
-  wrap.innerHTML = `<div class="mbubble">${text}</div>`;
-  msgs.appendChild(wrap);
-  msgs.scrollTop = msgs.scrollHeight;
-}
+  function addSysMsg(containerId, text) {
+    const msgs = document.getElementById(containerId);
+    const wrap = document.createElement('div');
+    wrap.className = 'mwrap sys';
+    wrap.innerHTML = `<div class="mbubble">${text}</div>`;
+    msgs.appendChild(wrap);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 
-function escHtml(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+  function escHtml(t) {
+    return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
-}
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+  }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
 
-let notifTimer;
-function showNotif(title, body) {
-  const n = document.getElementById('notif');
-  document.getElementById('notifTitle').textContent = title;
-  document.getElementById('notifBody').textContent = body;
-  n.classList.add('show');
-  clearTimeout(notifTimer);
-  notifTimer = setTimeout(() => n.classList.remove('show'), 3500);
-}
+  let notifTimer;
+  function showNotif(title, body) {
+    const n = document.getElementById('notif');
+    document.getElementById('notifTitle').textContent = title;
+    document.getElementById('notifBody').textContent = body;
+    n.classList.add('show');
+    clearTimeout(notifTimer);
+    notifTimer = setTimeout(() => n.classList.remove('show'), 3500);
+  }
 </script>
 </body>
 </html>
